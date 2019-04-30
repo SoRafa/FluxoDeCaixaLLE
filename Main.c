@@ -5,7 +5,6 @@
 struct nodo{
     int cod;
     int data;
-    int tipo;
     float entrada;
     float saida;
     float valor;
@@ -19,17 +18,17 @@ Lista * InicializaLLE()
 }
 
 //Insere ordenado por Data
-Lista * InsereLivro(Lista *L, int Cod, int Data, float Entrada, float Saida , char Desc[])
+Lista * InsereLivro(Lista *L, int Cod, int Data, float E, float S , char Desc[])
 { Lista *pAux, *novo;
   novo = (Lista *) malloc (sizeof (Lista));
   novo->cod = Cod;
   novo->data = Data;
-  novo->entrada = Entrada;
-  novo->saida = Saida;
-  novo->desc[0] = Desc[0];
-  novo->elo = NULL; // vai ser o último
+  novo->entrada = E;
+  novo->saida = S;
+  strcpy(novo->desc, Desc);
+  novo->elo = NULL;
   if (L == NULL)
-      L = novo; // 1º nodo
+      L = novo;
  else{
     pAux = L; // p1 no início da lista
     while (pAux->elo != NULL){
@@ -39,62 +38,50 @@ Lista * InsereLivro(Lista *L, int Cod, int Data, float Entrada, float Saida , ch
     }
   return L;
 }
-//Remove
-Lista * RemoveLLE_I(Lista * paux){
-  Lista *desaloca;
-  if(paux==NULL)
-{
-  printf("ERRO - Lista Vazia!\n\n");
-  return paux;
-}
-  desaloca = paux;
-  paux = paux->elo;
-  free (desaloca);
-return paux;
-}
 
+//Exibe lista completa
 void ExibeLLE(Lista * L)
 {
-    Lista * Paux;
-    int cont=0;
-    if (L == NULL){
-        printf("\nSem movimentacao!\n\n");
-        }
-    else{
-        Paux = L;
-    while (Paux != NULL){ //Percorrer a lista
-       printf("codigo:%d tipo:%d, valor = %d, na data: %d, descricao:%s\n", Paux->cod ,Paux->tipo, Paux->valor, Paux->data, Paux->desc);
-       Paux = Paux->elo;
-       cont++;
-    }
-        printf("\n\n numero de movimentacoes %d.\n\n",cont);
- }
-}
-
-
-//Exibe a Lista
-void ExibeData(Lista * L, int d){
     Lista * Paux;
     Paux = L;
     if (L == NULL){ //nenhum elemento
     printf("\nLista vazia!\n\n");
-    system("pause");
-    }else if(d == Paux->data){
+    return 0;
+    }
       printf("Endereco inicial em %d\n",L);
       printf("COD\t DATA\t DESCRICAO\t SAIDA\t ENTRADA\n");
       Paux = L; //Paux recebe o endereço do início da lista
         while (Paux != NULL){ //Percorrer a lista
           printf("%d\t %d  %s  \t %d \t %d \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
           Paux = Paux->elo;
-    }
+          }
+          return 0;
   }
+
+//Exibe a Lista utilizando a data
+void ExibeData(Lista * L, int d){
+    Lista * Paux;
+    Paux = L;
+    if (L == NULL){ //nenhum elemento
+    printf("\nLista vazia!\n\n");
+    return 0;
+    }
+      printf("Endereco inicial em %d\n",L);
+      printf("COD\t DATA\t DESCRICAO\t SAIDA\t ENTRADA\n");
+      Paux = L; //Paux recebe o endereço do início da lista
+        while (Paux != NULL){ //Percorrer a lista
+                if(d == Paux->data){
+          printf("%d\t %d  %s  \t %d \t %d \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
+          }
+        Paux = Paux->elo;
+  }
+  return 0;
 }
 
 //Remove o Nodo por código
 void RemoveCod(Lista * L, int c){
   printf("Digite o codigo do nodo que deseja remover: \n");
   scanf("%d", c);
-
 }
 
 //___________________________________________________
@@ -102,7 +89,7 @@ int main()
 {
 int opcao,x=0, i=0; //variaveis Menu
 int COD,DATA,TIPO;
-float VALOR,ENTRADA = 0,SAIDA = 0;
+float VALOR, ENTRADA, SAIDA;
 char DESC[30];
 Lista * L;
 L = InicializaLLE();
@@ -138,13 +125,17 @@ L = InicializaLLE();
                 ENTRADA = 0;}
               printf("digite a descricao:");
               scanf("%s", &DESC);
+            printf("%f   %d\n", VALOR, TIPO);
+            printf("%f   %f", ENTRADA, SAIDA);
+            system("pause");
               L = InsereLivro(L, COD, DATA, ENTRADA, SAIDA, DESC);
               system("pause");
               break;
-      case 2: printf("Digite um valor para inserir:\n");
+      case 2:  printf("Digite o codigo do nodo que deseja remover: \n");
+                scanf("%d", &i);
 
               break;
-      case 3:   printf("coloque uma data:");
+      case 3:   printf("coloque uma data:\n");
                 scanf("%d", &i);
                 ExibeData(L,i);
                 system("pause");
@@ -152,7 +143,7 @@ L = InicializaLLE();
       case 4:ExibeLLE(L);
             system("pause");
               break;
-      case 5: 
+      case 5: printf("Digite um valor para inserir:\n");
 
               break;
       case 6: exit(0);
