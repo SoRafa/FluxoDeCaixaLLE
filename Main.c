@@ -17,7 +17,7 @@ Lista * InicializaLLE()
   return NULL;
 }
 
-//Insere ordenado por Data
+//Insere ordenado por Data (desenvolvimento)
 Lista * InsereLivro(Lista *L, int Cod, int Data, float Entrada, float Saida, char Desc[])
 { Lista *pAux, *novo;
   novo = (Lista *) malloc (sizeof (Lista));
@@ -39,7 +39,7 @@ Lista * InsereLivro(Lista *L, int Cod, int Data, float Entrada, float Saida, cha
   return L;
 }
 
-//Exibe lista completa
+//Salve lista completa em Arquivo de Texto
 void ExibeLLE(Lista * L)
 {
     Lista * Paux;
@@ -49,54 +49,76 @@ void ExibeLLE(Lista * L)
     return 0;
     }
       printf("Endereco inicial em %d\n",L);
-      printf("COD\t DATA\t DESCRICAO\t SAIDA\t ENTRADA\n");
+      printf("COD\t DATA\t     DESCRICAO\t SAIDA\t   ENTRADA\n");
       Paux = L; //Paux recebe o endereço do início da lista
         while (Paux != NULL){ //Percorrer a lista
-          printf("%d\t %d  %s  \t %d \t %d \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
+          printf("%d\t %d    %s  \t %.2f \t %.2f \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
           Paux = Paux->elo;
-          }
-          return 0;
+        }
+    return 0;
   }
 
-//Exibe a Lista utilizando a data
-void ExibeData(Lista * L, int d){
+//Exibe lista completa
+void SalvaArquivo(Lista * L)
+{
+    char nome[10]="Fluxo.txt";
+    FILE * FFluxo;
     Lista * Paux;
     Paux = L;
     if (L == NULL){ //nenhum elemento
     printf("\nLista vazia!\n\n");
     return 0;
     }
-      printf("Endereco inicial em %d\n",L);
-      printf("COD\t DATA\t DESCRICAO\t SAIDA\t ENTRADA\n");
+      FFluxo = fopen(nome, "a+");
+      fprintf(FFluxo,"Endereco inicial em %d\n",L);
+      fprintf(FFluxo,"COD\t DATA\t     DESCRICAO\t SAIDA\t   ENTRADA\n");
       Paux = L; //Paux recebe o endereço do início da lista
         while (Paux != NULL){ //Percorrer a lista
-                if(d == Paux->data){
-          printf("%d\t %d  %s  \t %d \t %d \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
-          }
-        Paux = Paux->elo;
+          fprintf(FFluxo,"%d\t %d    %s  \t %.2f \t %.2f \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
+          Paux = Paux->elo;
+        }
+        fclose(FFluxo);
+    return 0;
+  }
+
+//Exibe a Lista utilizando a data para filtrar
+void ExibeData(Lista * L, int d){
+    Lista * Paux;
+    Paux = L;
+    if (L == NULL){ //nenhum elemento
+    printf("\nLista vazia!\n\n");
+    return 0;
+    } if(d == Paux->data){
+    printf("Endereco inicial em %d\n",L);
+    printf("COD\t  DATA\t     DESCRICAO\t SAIDA\t   ENTRADA\n");
+    Paux = L;}
+      while (Paux != NULL){
+        if(d == Paux->data){
+          printf("%d\t %d  %s  \t %.2f \t %.2f \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
+      }
+    Paux = Paux->elo;
   }
   return 0;
 }
 
 //Remove o Nodo por código
 Lista * RemoverCod(Lista * lAux,int cod ){
-
-Lista *ptAux, *desaloca;
+  Lista *ptAux, *desaloca;
     if(lAux==NULL){
       printf("ERRO - Lista Vazia!\n\n");
       return lAux;
-      }
+    }
     if(lAux->elo == NULL){
       lAux = NULL;
       return lAux;
     }
-        ptAux = lAux; // p1 no início da lista
-        while(ptAux->elo->cod != cod){
-            ptAux = ptAux->elo;
-            }
-        desaloca = ptAux->elo;
-        ptAux->elo = ptAux->elo->elo;
-        free (desaloca);
+      ptAux = lAux; // p1 no início da lista
+      while(ptAux->elo->cod != cod){
+          ptAux = ptAux->elo;
+          }
+      desaloca = ptAux->elo;
+      ptAux->elo = ptAux->elo->elo;
+      free (desaloca);
     return lAux ;
 }
 
@@ -104,7 +126,7 @@ Lista *ptAux, *desaloca;
 int main()
 {
 int opcao,x=0, i=0; //variaveis Menu
-int COD,DATA,TIPO;
+int COD = 1,DATA,TIPO;
 float VALOR, ENTRADA, SAIDA;
 char DESC[30];
 Lista * L;
@@ -124,44 +146,47 @@ L = InicializaLLE();
     fflush(stdin);  //para resolver alguns problemas do scanf, limpando o buffer de teclado
     switch (opcao)
     {
-      case 1: printf("digite o codigo:\n");
-              scanf("%d", &COD);
-              printf("data que esta sendo inserido: (ANO/MES/DIA)\n");
+      case 1: printf("data que esta sendo inserido: (ANO/MES/DIA)\n");
               scanf("%d", &DATA);
               printf("digite o tipo de valor que vai ser inserido:\n");
               printf("1 - Entrada \t \t 2- Saida:\n");
               scanf("%d", &TIPO);
               printf("Digite o valor:");
               scanf("%f", &VALOR);
-              if(TIPO == 1){
+            if(TIPO == 1){
                 ENTRADA = VALOR;
                 SAIDA = 0;  } else {
                 SAIDA = VALOR;
                 ENTRADA = 0;}
                 printf("digite a descricao:");
                 scanf("%s", &DESC);
-                printf("%f   %d\n", VALOR, TIPO);
-                printf("%f   %f", ENTRADA, SAIDA);
+                printf("%.2f   %d\n", VALOR, TIPO);
+                printf("%.2f   %.2f\n", ENTRADA, SAIDA);
                 L = InsereLivro(L, COD, DATA, ENTRADA, SAIDA, DESC);
+                COD++;
                 system("pause");
               break;
-      case 2:   printf("Digite o codigo do nodo que deseja remover: \n");
-                scanf("%d", &i);
-                L = RemoverCod(L, i);
+      case 2: printf("Digite o codigo do nodo que deseja remover: \n");
+              scanf("%d", &i);
+              L = RemoverCod(L, i);
               break;
-      case 3:   printf("coloque uma data:\n");
-                scanf("%d", &i);
-                ExibeData(L,i);
-                system("pause");
+      case 3: printf("coloque uma data:\n");
+              scanf("%d", &i);
+              ExibeData(L,i);
+              system("pause");
               break;
-      case 4:ExibeLLE(L);
-            system("pause");
+      case 4: ExibeLLE(L);
+              printf("voce deseja salvar a lista?\n");
+              printf("1 - Sim \t \t 2-Nao\n");
+              scanf("%d",&TIPO);
+              if (TIPO == 1){
+                SalvaArquivo(L);
+              }
               break;
       case 5: printf("Digite um valor para inserir:\n");
 
               break;
       case 6: exit(0);
-
             break;
       default:
             printf("\tOpcao invalida!\n");
