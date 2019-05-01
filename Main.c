@@ -9,22 +9,22 @@ struct nodo{
     float saida;
     float valor;
     char desc[30];
-	struct nodo * elo;
+  struct nodo * elo;
   }; typedef struct nodo Lista;
 
 Lista * InicializaLLE()
 {
-	return NULL;
+  return NULL;
 }
 
 //Insere ordenado por Data
-Lista * InsereLivro(Lista *L, int Cod, int Data, float E, float S , char Desc[])
+Lista * InsereLivro(Lista *L, int Cod, int Data, float Entrada, float Saida, char Desc[])
 { Lista *pAux, *novo;
   novo = (Lista *) malloc (sizeof (Lista));
   novo->cod = Cod;
   novo->data = Data;
-  novo->entrada = E;
-  novo->saida = S;
+  novo->entrada = Entrada;
+  novo->saida = Saida;
   strcpy(novo->desc, Desc);
   novo->elo = NULL;
   if (L == NULL)
@@ -79,9 +79,25 @@ void ExibeData(Lista * L, int d){
 }
 
 //Remove o Nodo por código
-void RemoveCod(Lista * L, int c){
-  printf("Digite o codigo do nodo que deseja remover: \n");
-  scanf("%d", c);
+Lista * RemoverCod(Lista * lAux,int cod ){
+
+Lista *ptAux, *desaloca;
+    if(lAux==NULL){
+      printf("ERRO - Lista Vazia!\n\n");
+      return lAux;
+      }
+    if(lAux->elo == NULL){
+      lAux = NULL;
+      return lAux;
+    }
+        ptAux = lAux; // p1 no início da lista
+        while(ptAux->elo->cod != cod){
+            ptAux = ptAux->elo;
+            }
+        desaloca = ptAux->elo;
+        ptAux->elo = ptAux->elo->elo;
+        free (desaloca);
+    return lAux ;
 }
 
 //___________________________________________________
@@ -104,7 +120,6 @@ L = InicializaLLE();
     printf(" 5 - Exibe o total de saidas, entradas e o saldo\n");
     printf(" 6 - Sair\n");
 
-
     scanf("%d",&opcao);
     fflush(stdin);  //para resolver alguns problemas do scanf, limpando o buffer de teclado
     switch (opcao)
@@ -123,17 +138,16 @@ L = InicializaLLE();
                 SAIDA = 0;  } else {
                 SAIDA = VALOR;
                 ENTRADA = 0;}
-              printf("digite a descricao:");
-              scanf("%s", &DESC);
-            printf("%f   %d\n", VALOR, TIPO);
-            printf("%f   %f", ENTRADA, SAIDA);
-            system("pause");
-              L = InsereLivro(L, COD, DATA, ENTRADA, SAIDA, DESC);
-              system("pause");
+                printf("digite a descricao:");
+                scanf("%s", &DESC);
+                printf("%f   %d\n", VALOR, TIPO);
+                printf("%f   %f", ENTRADA, SAIDA);
+                L = InsereLivro(L, COD, DATA, ENTRADA, SAIDA, DESC);
+                system("pause");
               break;
-      case 2:  printf("Digite o codigo do nodo que deseja remover: \n");
+      case 2:   printf("Digite o codigo do nodo que deseja remover: \n");
                 scanf("%d", &i);
-
+                L = RemoverCod(L, i);
               break;
       case 3:   printf("coloque uma data:\n");
                 scanf("%d", &i);
@@ -148,10 +162,10 @@ L = InicializaLLE();
               break;
       case 6: exit(0);
 
-              break;
+            break;
       default:
-               printf("\tOpcao invalida!\n");
-               system("pause");
-     }
- }while(x == 0);
+            printf("\tOpcao invalida!\n");
+            system("pause");
+      }
+  }while(x == 0);
 }
