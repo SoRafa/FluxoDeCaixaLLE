@@ -12,12 +12,11 @@ struct nodo{
   struct nodo * elo;
   }; typedef struct nodo Lista;
 
-Lista * InicializaLLE()
-{
+Lista * InicializaLLE(){
   return NULL;
 }
 
-//Insere ordenado por Data (desenvolvimento)
+//Insere 
 Lista * InsereLivro(Lista *L, int Cod, int Data, float Entrada, float Saida, char Desc[])
 { Lista *pAux, *novo;
   novo = (Lista *) malloc (sizeof (Lista));
@@ -74,7 +73,6 @@ void ExibeData(Lista * L, int d){
     printf("\nLista vazia!\n\n");
     return 0;
     } if(d == Paux->data){
-    printf("Endereco inicial em %d\n",L);
     printf("COD\t  DATA\t     DESCRICAO\t SAIDA\t   ENTRADA\n");
     Paux = L;}
       while (Paux != NULL){
@@ -95,7 +93,6 @@ void ExibeLLE(Lista * L)
     printf("\nLista vazia!\n\n");
     return 0;
     }
-      printf("Endereco inicial em %d\n",L);
       printf("COD\t DATA\t     DESCRICAO\t SAIDA\t   ENTRADA\n");
       Paux = L; //Paux recebe o endereço do início da lista
         while (Paux != NULL){ //Percorrer a lista
@@ -113,18 +110,17 @@ void SalvaArquivo(Lista * L)
     Lista * Paux;
     Paux = L;
     if (L == NULL){ //nenhum elemento
-    printf("\nLista vazia!\n\n");
+      printf("\nLista vazia!\n\n");
     return 0;
     }
       FFluxo = fopen(nome, "a+");
-      fprintf(FFluxo,"Endereco inicial em %d\n",L);
       fprintf(FFluxo,"COD\t DATA\t     DESCRICAO\t SAIDA\t   ENTRADA\n");
       Paux = L; //Paux recebe o endereço do início da lista
         while (Paux != NULL){ //Percorrer a lista
           fprintf(FFluxo,"%d\t %d    %s  \t %.2f \t %.2f \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
           Paux = Paux->elo;
         }
-        fclose(FFluxo);
+      fclose(FFluxo);
     return 0;
   }
 
@@ -134,27 +130,31 @@ float SomaE=0;
 float SomaS=0;
 float saldo=0;
     if (L == NULL){ //nenhum elemento
-    printf("\nLista vazia!\n\n");
+      printf("\nLista vazia!\n\n");
     return 0;
     }
       Paux = L; //Paux recebe o endereço do início da lista
         printf("\nEntradas:\n");
         while (Paux != NULL){
-            if(Paux->entrada == 0){Paux = Paux->elo;}else{
+            if(Paux->entrada == 0){Paux = Paux->elo;
+              }else{
                 printf(" Valor: %.2f \n Descricao: %s\n\n",Paux->entrada,Paux->desc);
                 SomaE = Paux->entrada + SomaE;
                 Paux = Paux->elo;
-            }}
+            }
+          }
         printf("Total: %.2f\n\n", SomaE);
 
         Paux = L; //Paux recebe o endereço do início da lista
         printf("\nSaidas:\n");
         while (Paux != NULL){
-            if(Paux->saida == 0){Paux = Paux->elo;}else{
+            if(Paux->saida == 0){Paux = Paux->elo;
+              }else{
                 printf(" Valor: %.2f \n Descricao: %s\n\n",Paux->saida,Paux->desc);
                 SomaS = Paux->saida + SomaS;
                 Paux = Paux->elo;
-        }}
+            }
+          }
         printf("Total: %.2f \n\n", SomaS);
 
             saldo = SomaE - SomaS;
@@ -194,11 +194,12 @@ L = InicializaLLE();
               scanf("%d", &TIPO);
               printf("Digite o valor:");
               scanf("%f", &VALOR);
-            if(TIPO == 1){
-                ENTRADA = VALOR;
-                SAIDA = 0;  } else {
-                SAIDA = VALOR;
-                ENTRADA = 0;}
+                if(TIPO == 1){
+                  ENTRADA = VALOR;
+                  SAIDA = 0;  
+                  } else {
+                  SAIDA = VALOR;
+                  ENTRADA = 0;}
                 printf("digite a descricao:");
                 scanf("%s", &DESC);
                 printf("%.2f   %d\n", VALOR, TIPO);
@@ -220,15 +221,15 @@ L = InicializaLLE();
               printf("voce deseja salvar a lista?\n");
               printf("1 - Sim \t \t 2-Nao\n");
               scanf("%d",&TIPO);
-              if (TIPO == 1){
-                SalvaArquivo(L);
-              }
+                if (TIPO == 1){
+                  SalvaArquivo(L);
+                }
               break;
       case 5: MostraSaldo(L);
-            system("pause");
+              system("pause");
               break;
       case 6: exit(0);
-            break;
+              break;
       default:
             printf("\tOpcao invalida!\n");
             system("pause");
