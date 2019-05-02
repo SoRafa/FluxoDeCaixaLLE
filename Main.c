@@ -39,6 +39,53 @@ Lista * InsereLivro(Lista *L, int Cod, int Data, float Entrada, float Saida, cha
   return L;
 }
 
+//Remove o Nodo por código
+Lista * RemoverCod(Lista * lAux,int cod ){
+  Lista *ptAux, *desaloca;
+    if(lAux==NULL){
+      printf("ERRO - Lista Vazia!\n\n");
+      return lAux;
+    }
+    if(lAux->elo == NULL){
+      lAux = NULL;
+      return lAux;
+    }
+    if(lAux->cod == cod){
+      desaloca = lAux;
+      lAux = lAux->elo;
+      free (desaloca);
+      return lAux;
+    }
+      ptAux = lAux; // p1 no início da lista
+      while(ptAux->elo->cod != cod){
+          ptAux = ptAux->elo;
+          }
+      desaloca = ptAux->elo;
+      ptAux->elo = ptAux->elo->elo;
+      free (desaloca);
+    return lAux ;
+}
+
+//Exibe a Lista utilizando a data para filtrar
+void ExibeData(Lista * L, int d){
+    Lista * Paux;
+    Paux = L;
+    if (L == NULL){ //nenhum elemento
+    printf("\nLista vazia!\n\n");
+    return 0;
+    } if(d == Paux->data){
+    printf("Endereco inicial em %d\n",L);
+    printf("COD\t  DATA\t     DESCRICAO\t SAIDA\t   ENTRADA\n");
+    Paux = L;}
+      while (Paux != NULL){
+        if(d == Paux->data){
+          printf("%d\t %d  %s  \t %.2f \t %.2f \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
+      }
+    Paux = Paux->elo;
+  }
+  return 0;
+}
+
 //Salve lista completa em Arquivo de Texto
 void ExibeLLE(Lista * L)
 {
@@ -81,46 +128,40 @@ void SalvaArquivo(Lista * L)
     return 0;
   }
 
-//Exibe a Lista utilizando a data para filtrar
-void ExibeData(Lista * L, int d){
-    Lista * Paux;
-    Paux = L;
+void MostraSaldo(Lista * L){
+Lista * Paux;
+float SomaE=0;
+float SomaS=0;
+float saldo=0;
     if (L == NULL){ //nenhum elemento
     printf("\nLista vazia!\n\n");
     return 0;
-    } if(d == Paux->data){
-    printf("Endereco inicial em %d\n",L);
-    printf("COD\t  DATA\t     DESCRICAO\t SAIDA\t   ENTRADA\n");
-    Paux = L;}
-      while (Paux != NULL){
-        if(d == Paux->data){
-          printf("%d\t %d  %s  \t %.2f \t %.2f \n", Paux->cod, Paux->data,Paux->desc, Paux->saida, Paux->entrada);
-      }
-    Paux = Paux->elo;
-  }
-  return 0;
+    }
+      Paux = L; //Paux recebe o endereço do início da lista
+        printf("\nEntradas:\n");
+        while (Paux != NULL){
+            if(Paux->entrada == 0){Paux = Paux->elo;}else{
+                printf(" Valor: %.2f \n Descricao: %s\n\n",Paux->entrada,Paux->desc);
+                SomaE = Paux->entrada + SomaE;
+                Paux = Paux->elo;
+            }}
+        printf("Total: %.2f\n\n", SomaE);
+
+        Paux = L; //Paux recebe o endereço do início da lista
+        printf("\nSaidas:\n");
+        while (Paux != NULL){
+            if(Paux->saida == 0){Paux = Paux->elo;}else{
+                printf(" Valor: %.2f \n Descricao: %s\n\n",Paux->saida,Paux->desc);
+                SomaS = Paux->saida + SomaS;
+                Paux = Paux->elo;
+        }}
+        printf("Total: %.2f \n\n", SomaS);
+
+            saldo = SomaE - SomaS;
+            printf("\n Saldo = %.2f\n",saldo);
+        return 0;
 }
 
-//Remove o Nodo por código
-Lista * RemoverCod(Lista * lAux,int cod ){
-  Lista *ptAux, *desaloca;
-    if(lAux==NULL){
-      printf("ERRO - Lista Vazia!\n\n");
-      return lAux;
-    }
-    if(lAux->elo == NULL){
-      lAux = NULL;
-      return lAux;
-    }
-      ptAux = lAux; // p1 no início da lista
-      while(ptAux->elo->cod != cod){
-          ptAux = ptAux->elo;
-          }
-      desaloca = ptAux->elo;
-      ptAux->elo = ptAux->elo->elo;
-      free (desaloca);
-    return lAux ;
-}
 
 //___________________________________________________
 int main()
@@ -183,8 +224,8 @@ L = InicializaLLE();
                 SalvaArquivo(L);
               }
               break;
-      case 5: printf("Digite um valor para inserir:\n");
-
+      case 5: MostraSaldo(L);
+            system("pause");
               break;
       case 6: exit(0);
             break;
